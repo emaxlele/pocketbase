@@ -2,7 +2,7 @@ name: Sync Fork with Upstream
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # ogni giorno alle 06:00 UTC
+    - cron: '0 6 */13 * *'  # ogni 13 giorni alle 06:00 UTC
   workflow_dispatch:               # bottone manuale disponibile
 
 jobs:
@@ -21,8 +21,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name  "emaxlele"
+          git config user.email "emaxlele.lavoro@gmail.com"
 
       - name: Add upstream remote
         run: git remote add upstream https://github.com/pocketbase/pocketbase.git
