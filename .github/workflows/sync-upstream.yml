@@ -1,0 +1,44 @@
+name: Sync Fork with Upstream
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # ogni giorno alle 06:00 UTC
+  workflow_dispatch:       # bottone manuale disponibile
+
+jobs:
+  sync:
+    name: Sync pocketbase/pocketbase → emaxlele/pocketbase
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/pocketbase/pocketbase.git
+
+      - name: Fetch upstream
+        run: git fetch upstream --tags
+
+      - name: Sync main branch
+        run: |
+          git checkout main
+          git merge --no-edit upstream/main
+
+      - name: Push to fork
+        run: git push origin main --follow-tags
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Sync failed — likely a merge conflict. Resolve manually and re-run."
